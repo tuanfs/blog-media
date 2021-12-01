@@ -1,0 +1,72 @@
+<div class='mt-4'>
+    <div>
+        <h3>Khóa Học Của Tôi</h3>
+        <a href="/me/trash/courses">Thùng rác ({{deletedCount}})</a>
+    </div>
+    <table class='table mt-4'>
+        <thead>
+            <tr>
+                <th scope='col'>STT</th>
+                <th scope='col'>Tên Khóa Học</th>
+                <th scope='col'>Thời Gian Tạo</th>
+                <th scope='col'>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses}}
+            <tr>
+                <th scope='row'>{{sum @index 1}}</th>
+                <td>{{this.name}}</td>
+                <td>{{this.createdAt}}</td>
+                <td>
+                    <a type='button' class='btn btn-secondary' href='/courses/{{this._id}}/edit'>Sửa</a>
+                    <a type='button' class='btn btn-danger delete-item' data-bs-toggle='modal'
+                        data-bs-target='#staticBackdrop' data-id='{{this._id}}'>Xóa</a>
+                </td>
+            </tr>
+            {{else}}
+            <tr>
+                <td colspan='5' class='text-center'>
+                    Bạn chưa đăng khóa học nào.
+                    <a href='/courses/create' class='link'>Đăng khóa học</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+<form class='row' method='post' id='form-delete'></form>
+<!-- Modal -->
+<div class='modal fade' id='staticBackdrop' data-bs-backdrop='static' data-bs-keyboard='false' tabindex='-1'
+    aria-labelledby='staticBackdropLabel' aria-hidden='true'>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h5 class='modal-title' id='staticBackdropLabel'>Xóa Khóa Học</h5>
+                <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+            </div>
+            <div class='modal-body'>
+                Bạn muốn xóa khóa học ?
+            </div>
+            <div class='modal-footer'>
+                <button type='button' class='btn btn-danger' id="delete-courses">Xóa Bỏ</button>
+                <button type='button' class='btn btn-primary' data-bs-dismiss='modal'>Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const btnDeleteAll = document.querySelectorAll('.delete-item');
+    const btnDelete = document.getElementById('delete-courses');
+    btnDeleteAll.forEach(btn => {
+        btn.onclick = (e) => {
+            const courseId = e.target.dataset.id;
+            btnDelete.addEventListener('click', function () {
+                const formDelete = document.getElementById('form-delete');
+                formDelete.action = `/courses/${courseId}?_method=DELETE`;
+                formDelete.submit();
+            })
+        }
+    })
+</script>

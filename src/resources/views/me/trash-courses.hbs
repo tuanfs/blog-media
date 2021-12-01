@@ -1,0 +1,86 @@
+<div class='mt-4'>
+    <div>
+        <h3>Khóa học đã xóa</h3>
+        <a href='/me/stored/courses'>Danh sách khóa học</a>
+    </div>
+    <table class='table mt-4'>
+        <thead>
+            <tr>
+                <th scope='col'>STT</th>
+                <th scope='col'>Tên Khóa Học</th>
+                <th scope='col'>Thời Gian Xóa</th>
+                <th scope='col'>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses}}
+            <tr>
+                <th scope='row'>{{sum @index 1}}</th>
+                <td>{{this.name}}</td>
+                <td>{{this.createdAt}}</td>
+                <td>
+                    <a class='btn btn-secondary btn-restore' data-id='{{this._id}}'>Khôi
+                        phục</a>
+                    <a class='btn btn-danger delete-item' data-bs-toggle='modal' data-bs-target='#staticBackdrop'
+                        data-id='{{this._id}}'>Xóa vĩnh viễn</a>
+                </td>
+            </tr>
+            {{else}}
+            <tr>
+                <td colspan='5' class='text-center'>
+                    Thùng rác trống
+                    <a href='/me/stored/courses' class='link'>Danh sách khóa học</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+<form class='row' method='post' id='form-delete'></form>
+<form class='row' method='post' id='form-restore'></form>
+<!-- Modal -->
+<div class='modal fade' id='staticBackdrop' data-bs-backdrop='static' data-bs-keyboard='false' tabindex='-1'
+    aria-labelledby='staticBackdropLabel' aria-hidden='true'>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h5 class='modal-title' id='staticBackdropLabel'>Xóa Khóa Học</h5>
+                <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+            </div>
+            <div class='modal-body'>
+                Bạn muốn xóa khóa học ?
+            </div>
+            <div class='modal-footer'>
+                <button type='button' class='btn btn-danger' id="delete-courses">Xóa Bỏ</button>
+                <button type='button' class='btn btn-primary' data-bs-dismiss='modal'>Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const btnDeleteAll = document.querySelectorAll('.delete-item');
+    const btnDelete = document.getElementById('delete-courses');
+    const btnRestoreAll = document.querySelectorAll('.btn-restore')
+    btnDeleteAll.forEach(btn => {
+        btn.onclick = (e) => {
+            const courseId = e.target.dataset.id;
+            btnDelete.addEventListener('click', function () {
+                const formDelete = document.getElementById('form-delete');
+                formDelete.action = `/courses/${courseId}/force?_method=DELETE`;
+                formDelete.submit();
+            })
+        }
+    })
+    btnRestoreAll.forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault()
+            const courseId = e.target.dataset.id;
+            const formRestore = document.getElementById('form-restore')
+            formRestore.action = `/courses/${courseId}/restore?_method=PATCH`;
+            formRestore.submit();
+            console.log(courseId)
+
+        })
+    })
+</script>
